@@ -96,6 +96,7 @@ public class User {
         return user;
     }
 
+
     public static boolean delete(int id){
         String query = "DELETE FROM public.\"user\" WHERE id = ?";
         try {
@@ -107,6 +108,58 @@ public class User {
         }
 
     }
+
+    public static boolean update(int id, String name, String uName, String password, String userType){
+        String query = "UPDATE public.\"user\" SET name=?,uname=?,password=?,type=? WHERE id = ?";
+        User findUser = User.getFetch(uName);
+        if (findUser != null && findUser.getId() != id){
+            Helper.showMessage("This username has been used before");
+            return false;
+        }
+        try {
+            PreparedStatement preparedStatement = DBConnector.getInstance().prepareStatement(query);
+            preparedStatement.setString(1,name);
+            preparedStatement.setString(2,uName);
+            preparedStatement.setString(3,password);
+            preparedStatement.setString(4,userType);
+            preparedStatement.setInt(5,id);
+            return preparedStatement.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ArrayList<User> searchUserList(String query){
+        ArrayList<User> userList = new ArrayList<>();
+        User user;
+        try {
+            Statement statement = DBConnector.getInstance().createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()){
+                user = new User();
+                user.setId(resultSet.getInt("id"));
+                user.setName(resultSet.getString("name"));
+                user.setUname(resultSet.getString("uname"));
+                user.setPassword(resultSet.getString("password"));
+                user.setUserType(resultSet.getString("type"));
+                userList.add(user);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return userList;
+    }
+
+    public static String searchQuery(String name, String uname, String userType){
+        String query = "SELECT * FROM public.\"user\" WHERE uname ILIKE '%{{uname}}%' AND name ILIKE '%{{name}}%' AND type LIKE '{{type}}'";
+        query = query.replace("{{name}}", name);
+        query = query.replace("{{uname}}", uname);
+        query = query.replace("{{type}}", userType);
+
+        return query;
+    }
+
+
 
     public void setId(int id) {
         this.id = id;

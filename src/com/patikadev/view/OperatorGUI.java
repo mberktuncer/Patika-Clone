@@ -126,6 +126,18 @@ public class OperatorGUI extends JFrame {
             });
         });
 
+        deleteMenu.addActionListener(e -> {
+            if (Helper.confirm("sure")){
+                int selectedRowId = Integer.parseInt(tbl_patika_list.getValueAt(tbl_patika_list.getSelectedRow(), 0).toString());
+                if (Patika.delete(selectedRowId)){
+                    Helper.showMessage("done");
+                }
+                else{
+                    Helper.showMessage("error");
+                }
+            }
+        });
+
         mdl_patika_list = new DefaultTableModel();
         Object[] col_patika_list = {"id", "Patika Name"};
         mdl_patika_list.setColumnIdentifiers(col_patika_list);
@@ -172,13 +184,15 @@ public class OperatorGUI extends JFrame {
                 Helper.showMessage("fill");
             }
             else{
-                int userId = Integer.parseInt(fld_user_id.getText());
-                if (User.delete(userId)){
-                    Helper.showMessage("done");
-                    loadUserModel();
-                }
-                else{
-                    Helper.showMessage("error");
+                if (Helper.confirm("sure")){
+                    int userId = Integer.parseInt(fld_user_id.getText());
+                    if (User.delete(userId)){
+                        Helper.showMessage("done");
+                        loadUserModel();
+                    }
+                    else{
+                        Helper.showMessage("error");
+                    }
                 }
             }
         });

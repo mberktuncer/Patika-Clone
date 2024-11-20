@@ -56,6 +56,19 @@ public class Helper {
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
+    public static boolean confirm(String str){
+        String msg;
+        switch (str){
+            case "sure":
+                msg = "Are you sure ?";
+                break;
+            default:
+                msg = str;
+                break;
+        }
+        return JOptionPane.showConfirmDialog(null, msg, "Last Decision?", JOptionPane.YES_NO_OPTION) == 0;
+    }
+
     public static void optionPaneTR(){
         UIManager.put("OptionPane.okButtonText", "OK");
     }

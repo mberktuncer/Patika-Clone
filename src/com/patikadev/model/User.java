@@ -119,6 +119,36 @@ public class User {
         return user;
     }
 
+    public static User getFetch(String userName, String password){
+        User user = null;
+        String sql = "SELECT * FROM public.\"user\" WHERE uname = ? AND password = ?";
+
+        try {
+            PreparedStatement preparedStatement = DBConnector.getInstance().prepareStatement(sql);
+            preparedStatement.setString(1, userName);
+            preparedStatement.setString(2, password);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                switch (resultSet.getString("type")){
+                    case "operator":
+                        user = new Operator();
+                        break;
+                    default:
+                        user = new User();
+                }
+                user.setId(resultSet.getInt("id"));
+                user.setName(resultSet.getString("name"));
+                user.setUname(resultSet.getString("uname"));
+                user.setPassword(resultSet.getString("password"));
+                user.setUserType(resultSet.getString("type"));
+                break;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return user;
+    }
+
 
     public static boolean delete(int id){
         String query = "DELETE FROM public.\"user\" WHERE id = ?";

@@ -2,6 +2,7 @@ package com.patikadev.model;
 
 import com.patikadev.helper.DBConnector;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -46,6 +47,57 @@ public class Course {
             throw new RuntimeException(e);
         }
         return courses;
+    }
+
+    public static ArrayList<Course> getListByUserId(int uid) {
+        ArrayList<Course> courses = new ArrayList<>();
+        Course course;
+        try {
+            Statement statement = DBConnector.getInstance().createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM public.\"course\" WHERE id = " + uid);
+            while (resultSet.next()){
+                int id = resultSet.getInt("id");
+                int userId = resultSet.getInt("user_id");
+                int patikaId = resultSet.getInt("patika_id");
+                String name = resultSet.getString("name");
+                String language = resultSet.getString("language");
+                course = new Course(id, userId, patikaId, name, language);
+                courses.add(course);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return courses;
+    }
+
+    public static boolean add(int userId, int patikaId, String name, String language){
+        String query = "INSERT INTO public.course (user_id, patika_id, \"name\", \"language\") VALUES(?, ?, ?, ?)";
+
+        try {
+            PreparedStatement preparedStatement = DBConnector.getInstance().prepareStatement(query);
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, patikaId);
+            preparedStatement.setString(3, name);
+            preparedStatement.setString(4, language);
+            return preparedStatement.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean delete(int id){
+        String query = "DELETE FROM public.\"course\" WHERE id = ?";
+
+        try {
+            PreparedStatement preparedStatement = DBConnector.getInstance().prepareStatement(query);
+            preparedStatement.setInt(1, id);
+
+
+            return preparedStatement.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public int getId() {

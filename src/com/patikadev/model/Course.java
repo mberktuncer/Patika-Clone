@@ -53,8 +53,10 @@ public class Course {
         ArrayList<Course> courses = new ArrayList<>();
         Course course;
         try {
-            Statement statement = DBConnector.getInstance().createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM public.\"course\" WHERE id = " + uid);
+            String query = "SELECT * FROM public.\"course\" WHERE user_id = ?";
+            PreparedStatement preparedStatement = DBConnector.getInstance().prepareStatement(query);
+            preparedStatement.setInt(1, uid);
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
                 int id = resultSet.getInt("id");
                 int userId = resultSet.getInt("user_id");

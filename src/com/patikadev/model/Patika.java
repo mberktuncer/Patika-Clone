@@ -34,6 +34,7 @@ public class Patika {
         return patikaList;
     }
 
+
     public static boolean add(String name){
         String query = "INSERT INTO public.\"patika\" (name) VALUES (?)";
         try {

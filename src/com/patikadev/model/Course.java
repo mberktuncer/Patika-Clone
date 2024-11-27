@@ -72,6 +72,30 @@ public class Course {
         return courses;
     }
 
+    public static ArrayList<Course> getListByPatikaId(int pId){
+        ArrayList<Course> courses = new ArrayList<>();
+        Course course;
+        try{
+            String query = "SELECT * FROM public.\"course\" WHERE patika_id = ?";
+            PreparedStatement preparedStatement = DBConnector.getInstance().prepareStatement(query);
+            preparedStatement.setInt(1, pId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                int id = resultSet.getInt("id");
+                int userId = resultSet.getInt("user_id");
+                int patikaId = resultSet.getInt("patika_id");
+                String name = resultSet.getString("name");
+                String language = resultSet.getString("language");
+                course = new Course(id, userId, patikaId, name, language);
+                courses.add(course);
+            }
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return courses;
+    }
+
     public static boolean add(int userId, int patikaId, String name, String language){
         String query = "INSERT INTO public.course (user_id, patika_id, \"name\", \"language\") VALUES(?, ?, ?, ?)";
 
